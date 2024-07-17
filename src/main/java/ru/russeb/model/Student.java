@@ -15,7 +15,11 @@ public class Student implements Comparable<Student> {
             throw new RuntimeException("ID должен быть больше нуля!");
         }
         this.id = id;
-        this.name = name;
+        if(name==null||name.isEmpty()){
+            this.name = NO_INFO;
+        }else{
+            this.name = name;
+        }
     }
     public int getId(){
         return id;
@@ -82,8 +86,8 @@ public class Student implements Comparable<Student> {
     @Override
     public String toString() {
         return "ID - " + id + ": " +
-                name + ", студент " +
-                course + "-го курса, обучающийся на направлении \"" + directionOfStudy +
+                (NO_INFO.equals(name) ? "(Имя неизвестно), " : name + ", студент ") +
+                (course==NO_COURSE ? "(курс неизвестен), " : course+"-го курса, ")  + "обучающийся на направлении \"" + directionOfStudy +
                 "\" на факультете - \"" + faculty + "\".";
     }
 }
