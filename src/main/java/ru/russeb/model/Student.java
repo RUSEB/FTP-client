@@ -2,7 +2,7 @@ package ru.russeb.model;
 
 public class Student implements Comparable<Student> {
     public final static String NO_INFO = "Инфромация отсутствует";
-    public final static int NO_COURSE = -1;
+    public final static int NO_COURSE = 0;
 
     private final int id;
     private String name;
@@ -21,6 +21,7 @@ public class Student implements Comparable<Student> {
             this.name = name;
         }
     }
+
     public int getId(){
         return id;
     }
@@ -42,7 +43,7 @@ public class Student implements Comparable<Student> {
     }
 
     public void setCourse(int course){
-        if(course<=0){
+        if(course<0){
             this.course = NO_COURSE;
         }else {
             this.course = course;
