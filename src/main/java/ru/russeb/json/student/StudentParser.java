@@ -2,12 +2,13 @@ package ru.russeb.json.student;
 
 import ru.russeb.model.Student;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+
 
 
 public class StudentParser {
@@ -36,9 +37,10 @@ public class StudentParser {
         Pattern pattern = Pattern.compile(STUDENT_PATTERN);
         return pattern.matcher(json);
     }
+
     private static JsonResult buildStudentsFromMatcher(Matcher matcher) {
         Map<Integer,Student> studentMap = new HashMap<>();
-        List<Student> invalidStudentList = new ArrayList<>();
+        List<Student> invalidStudentList = new LinkedList<>();
         Student student;
         while (matcher.find()) {
             int id = Integer.parseInt(matcher.group(1));
@@ -74,7 +76,7 @@ public class StudentParser {
         StringBuilder studentArrayJson = new StringBuilder();
 
         studentMap.forEach((key, value) -> {
-            studentArrayJson.append(getStudentJson(value)).append(",\n");
+            studentArrayJson.append(studentToJson(value)).append(",\n");
         });
 
         if (studentArrayJson.length() > 0) {
@@ -83,7 +85,7 @@ public class StudentParser {
         return String.format("{\n  \"students\": [\n%s\n  ]\n}", studentArrayJson);
     }
 
-    private static String getStudentJson(Student student) {
+    private static String studentToJson(Student student) {
         return String.format("    {\n"
                         + "      \"id\": %d,\n"
                         + "      \"name\": \"%s\",\n"
@@ -97,5 +99,4 @@ public class StudentParser {
                 (Student.NO_INFO.equals(student.getDirectionOfStudy()) ? "" : student.getDirectionOfStudy()),
                 (Student.NO_INFO.equals(student.getFaculty()) ? "" : student.getFaculty()));
     }
-
 }
