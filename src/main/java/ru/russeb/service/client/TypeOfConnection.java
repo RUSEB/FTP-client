@@ -1,6 +1,6 @@
 package ru.russeb.service.client;
 
-enum TypeOfConnection {
+public enum TypeOfConnection {
     ACTIVE,
     PASSIVE
 }
