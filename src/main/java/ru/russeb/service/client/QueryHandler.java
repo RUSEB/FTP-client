@@ -51,6 +51,33 @@ public class QueryHandler  implements AutoCloseable {
         this.typeOfConnection = typeOfConnection;
     }
 
+    public String readFile(String pathToFile) throws IOException, TimeoutException {
+        initDataChannel();
+        sendCommand(RETRIEVE_FILE_COMMAND +pathToFile);
+        waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
+        try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = dataIn.read(buffer)) != -1) {
+                byteArrayOut.write(buffer, 0, bytesRead);
+
+            }
+            waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
+            return byteArrayOut.toString();
+        }
+    }
+
+    public void writeFile(String pathToFile,String fileContent) throws IOException, TimeoutException {
+        initDataChannel();
+        sendCommand(STORE_FILE_COMMAND+pathToFile);
+        waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
+        try (OutputStreamWriter writer = new OutputStreamWriter(dataOut)) {
+            writer.write(fileContent);
+            writer.flush();
+        }
+        waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
+    }
+
     private void initDataChannel() throws IOException, TimeoutException {
         switch (typeOfConnection){
             case PASSIVE: passiveConnect();
@@ -94,8 +121,6 @@ public class QueryHandler  implements AutoCloseable {
     private static int getPortFromParts(int[] parts){
         return parts[4]*256+parts[5];
     }
-
-
 
     private void activeConnect(){
         //        dataSocket = new Socket()
@@ -145,35 +170,5 @@ public class QueryHandler  implements AutoCloseable {
             dataSocket.close();
         }
     }
-
-
-    public String readFile(String pathToFile) throws IOException, TimeoutException {
-        initDataChannel();
-        sendCommand(RETRIEVE_FILE_COMMAND +pathToFile);
-        waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
-        try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = dataIn.read(buffer)) != -1) {
-                byteArrayOut.write(buffer, 0, bytesRead);
-
-            }
-            waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
-            return byteArrayOut.toString();
-        }
-    }
-
-
-    public void writeFile(String pathToFile,String fileContent) throws IOException, TimeoutException {
-        initDataChannel();
-        sendCommand(STORE_FILE_COMMAND+pathToFile);
-        waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
-        try (OutputStreamWriter writer = new OutputStreamWriter(dataOut)) {
-            writer.write(fileContent);
-            writer.flush();
-        }
-        waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
-    }
-
 }
 
