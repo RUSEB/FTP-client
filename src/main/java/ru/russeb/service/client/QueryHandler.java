@@ -24,6 +24,7 @@ public class QueryHandler  implements AutoCloseable {
     private static final String ENTERING_PASSIVE_MODE_CODE = "227";
     private static final String STARTING_DATA_TRANSFER_CODE = "150";
     private static final String OPERATION_SUCCESSFUL_CODE = "226";
+    private static final String LOGIN_INCORRECT_CODE = "530";
 
     private final Socket manageSocket;
     private Socket dataSocket;
@@ -39,15 +40,14 @@ public class QueryHandler  implements AutoCloseable {
         commandOut = new PrintWriter(manageSocket.getOutputStream(), true);
     }
 
-    public void login(String login, String password) throws IOException, TimeoutException {
+    public boolean login(String login, String password) throws IOException, TimeoutException {
         sendCommand(USER_COMMAND + login);
         waitingCommandResponse(SPECIFY_PASSWORD_CODE);
         sendCommand(PASSWORD_COMMAND + password);
-        waitingCommandResponse(LOGIN_SUCCESSFUL_CODE);
+        return waitingCommandResponse(LOGIN_SUCCESSFUL_CODE,LOGIN_INCORRECT_CODE).startsWith(LOGIN_SUCCESSFUL_CODE);
     }
 
-
-    public void chooseTypeOfConnection(TypeOfConnection typeOfConnection) throws IOException, TimeoutException {
+    public void chooseTypeOfConnection(TypeOfConnection typeOfConnection){
         this.typeOfConnection = typeOfConnection;
     }
 
@@ -118,10 +118,12 @@ public class QueryHandler  implements AutoCloseable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            if(line.startsWith("5")){
+                throw new RuntimeException(line);
+            }
             if (System.currentTimeMillis() - startTime > timeoutMs) {
                 throw new TimeoutException("Вышло время ожидания ответа от сервера!");
             }
-
         }
         return line;
     }
