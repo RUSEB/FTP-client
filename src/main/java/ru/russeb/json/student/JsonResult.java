@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JsonResult {
-    private Map<Integer, Student> studentMap;
-    private List<Student> invalidStudentObjects;
+    private final Map<Integer, Student> studentMap;
+    private final List<Student> invalidStudentObjects;
 
     public JsonResult(Map<Integer,Student> studentMap,List<Student> invalidStudentObjects){
         this.studentMap = studentMap;
