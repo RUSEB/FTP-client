@@ -6,36 +6,30 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class StudentHandler {
+
     private final Map<Integer,Student> studentMap;
 
     public StudentHandler(Map<Integer,Student> students) {
         studentMap = students;
     }
 
-    public Optional<Student> addStudent(String name) {
-        if (name == null) {
-            return Optional.empty();
+    public int addStudent(Student student) {
+        if (student == null) {
+            throw new RuntimeException("Student can't be null");
         }
-
-        Student student = new Student(generateId(), name);
-        studentMap.put(student.getId(), student);
-        return Optional.of(student);
-    }
-
-
-    private int generateId(){
-        int id = 1;
-        while (studentMap.get(id)!=null){
-            id++;
-        }
-        return id;
+        Student newStudent = new Student(generateId(), student.getName());
+        newStudent.setCourse(student.getCourse());
+        newStudent.setDirectionOfStudy(student.getDirectionOfStudy());
+        newStudent.setFaculty(student.getFaculty());
+        studentMap.put(newStudent.getId(), newStudent);
+        return newStudent.getId();
     }
 
     public Map<Integer, Student> getStudentMap() {
         return studentMap;
     }
 
-    public List<Student> getStudentsAsListSortByName(String name) {
+    public List<Student> getStudentsAsListSortByName() {
         return studentMap.values().stream()
                 .sorted()
                 .collect(Collectors.toList());
@@ -49,4 +43,11 @@ public class StudentHandler {
         return Optional.ofNullable(studentMap.remove(id));
     }
 
+    private int generateId(){
+        int id = 1;
+        while (studentMap.get(id)!=null){
+            id++;
+        }
+        return id;
+    }
 }
