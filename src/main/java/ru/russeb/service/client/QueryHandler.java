@@ -75,7 +75,7 @@ public class QueryHandler  implements AutoCloseable {
 
             }
             waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
-            if(!serverSocket.isClosed()){
+            if(serverSocket!=null&&!serverSocket.isClosed()){
                 serverSocket.close();
             }
             return byteArrayOut.toString("UTF-8");
@@ -96,7 +96,7 @@ public class QueryHandler  implements AutoCloseable {
             writer.flush();
         }
         waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
-        if(!serverSocket.isClosed()){
+        if(serverSocket!=null&&!serverSocket.isClosed()){
             serverSocket.close();
         }
     }
