@@ -50,7 +50,6 @@ public class StartClient {
             System.out.println("6 - для завершения работы");
             System.out.print("=> ");
             System.err.flush();
-            System.out.flush();
 
             try{
                 commandCode = scanner.nextInt();
@@ -81,10 +80,11 @@ public class StartClient {
             if(studentList.isEmpty()){
                 System.out.println("Список всех студентов пуст.");
             }else {
-                System.out.println("Список студенов, отсортированный по имени.");
+                System.out.println("Список студенов, отсортированный по имени:");
                 for(Student student : studentList){
                     System.out.println(student);
                 }
+                System.out.println();
             }
         } catch (Exception e) {
             handleException(e);
@@ -105,6 +105,7 @@ public class StartClient {
         } catch (Exception e){
             handleException(e);
         }
+        System.out.println();
     }
 
     private static void addStudent(){
@@ -183,6 +184,7 @@ public class StartClient {
                 scanner.nextLine();
             }
         }
+        System.out.println();
         menu();
     }
 
@@ -234,7 +236,7 @@ public class StartClient {
     }
 
     private static TypeOfConnection requestTypeOfConnection(Scanner scanner) {
-        System.out.print("И наконец, нужно выбрать тип соеднинения к серверу, пожалуйста, введите число:\n1 - для выбора пассивного режима\n2 - для выбора активного режима\n=> ");
+        System.out.print("Нужно выбрать тип соеднинения к серверу, пожалуйста, введите число:\n1 - для выбора пассивного режима\n2 - для выбора активного режима\n=> ");
         while (true){
             try {
                 int type = scanner.nextInt();
