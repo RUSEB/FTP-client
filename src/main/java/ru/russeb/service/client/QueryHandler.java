@@ -2,6 +2,7 @@ package ru.russeb.service.client;
 
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
@@ -25,13 +26,19 @@ public class QueryHandler  implements AutoCloseable {
     private static final String STARTING_DATA_TRANSFER_CODE = "150";
     private static final String OPERATION_SUCCESSFUL_CODE = "226";
     private static final String LOGIN_INCORRECT_CODE = "530";
+    private static final String POST_COMMAND_SUCCESSFUL_CODE = "200";
 
+    private static final int MAX_CONNECTION_TO_CLIENT = 4;
     private final Socket manageSocket;
-    private Socket dataSocket;
     private final BufferedReader commandIn;
     private final PrintWriter commandOut;
+
+    private Socket dataSocket;
     private InputStream dataIn;
     private OutputStream dataOut;
+
+    private ServerSocket serverSocket;
+
     private TypeOfConnection typeOfConnection;
 
     public QueryHandler(String host, int port) throws IOException {
@@ -54,6 +61,11 @@ public class QueryHandler  implements AutoCloseable {
     public String readFile(String pathToFile) throws IOException, TimeoutException {
         initDataChannel();
         sendCommand(RETRIEVE_FILE_COMMAND +pathToFile);
+        if(typeOfConnection.equals(TypeOfConnection.ACTIVE)){
+            dataSocket = serverSocket.accept();
+            dataIn = dataSocket.getInputStream();
+            dataOut = dataSocket.getOutputStream();
+        }
         waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
         try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[4096];
@@ -63,7 +75,10 @@ public class QueryHandler  implements AutoCloseable {
 
             }
             waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
-            return byteArrayOut.toString();
+            if(!serverSocket.isClosed()){
+                serverSocket.close();
+            }
+            return byteArrayOut.toString("UTF-8");
         }
     }
 
@@ -71,18 +86,38 @@ public class QueryHandler  implements AutoCloseable {
         initDataChannel();
         sendCommand(STORE_FILE_COMMAND+pathToFile);
         waitingCommandResponse(STARTING_DATA_TRANSFER_CODE);
+        if(typeOfConnection.equals(TypeOfConnection.ACTIVE)){
+            dataSocket = serverSocket.accept();
+            dataIn = dataSocket.getInputStream();
+            dataOut = dataSocket.getOutputStream();
+        }
         try (OutputStreamWriter writer = new OutputStreamWriter(dataOut)) {
             writer.write(fileContent);
             writer.flush();
         }
         waitingCommandResponse(OPERATION_SUCCESSFUL_CODE);
+        if(!serverSocket.isClosed()){
+            serverSocket.close();
+        }
     }
 
     private void initDataChannel() throws IOException, TimeoutException {
         switch (typeOfConnection){
-            case PASSIVE: passiveConnect();
-            case ACTIVE: activeConnect();
+            case PASSIVE: {passiveConnect();break;}
+            case ACTIVE: {activeConnect();break;}
         }
+    }
+
+    private void activeConnect() throws IOException, TimeoutException {
+        serverSocket =  new ServerSocket(0);
+        int[] port = portToXY(serverSocket.getLocalPort());
+        sendCommand(SEND_POST_COMMAND+"127.0.0.1".replace(".",",")+","+port[0]+","+port[1]);
+        waitingCommandResponse(POST_COMMAND_SUCCESSFUL_CODE);
+    }
+    public static int[] portToXY(int port) {
+        int x = port / 256;
+        int y = port % 256;
+        return new int[]{x, y};
     }
 
     private void passiveConnect() throws IOException, TimeoutException {
@@ -122,10 +157,6 @@ public class QueryHandler  implements AutoCloseable {
         return parts[4]*256+parts[5];
     }
 
-    private void activeConnect(){
-        //        dataSocket = new Socket()
-        //        sendCommand(SEND_POST_COMMAND + );
-    }
 
     private String waitingCommandResponse(String... expectedCodes) throws IOException, TimeoutException {
         long startTime = System.currentTimeMillis();
