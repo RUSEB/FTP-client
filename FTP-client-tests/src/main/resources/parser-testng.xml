@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="FTP Client Tests">
-    <test name="Login and File Transfer Tests">
+<suite name="Проверка обработчика JSON строки">
+    <test name="Обработчик JSON строки">
         <classes>
-            <class name="ru.russeb.json.student.StudentParserTest"/>
+            <class name="ru.russeb.json.student.StudentParserFromJsonTest"/>
+            <class name="ru.russeb.json.student.StudentParserFromMapTest"/>
         </classes>
     </test>
 </suite>
