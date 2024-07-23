@@ -43,7 +43,7 @@ public class StudentHandler {
 
     public List<Student> getStudentsAsListSortByName() {
         return studentMap.values().stream()
-                .sorted()
+                .sorted(Comparator.comparing(Student::getName))
                 .collect(Collectors.toList());
     }
 

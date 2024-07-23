@@ -1,6 +1,6 @@
 package ru.russeb.model;
 
-public class Student implements Comparable<Student> {
+public class Student {
     public final static String NO_INFO = "Инфромация отсутствует";
     public final static int NO_COURSE = 0;
 
@@ -72,11 +72,6 @@ public class Student implements Comparable<Student> {
         }else{
             this.name = name;
         }
-    }
-
-    @Override
-    public int compareTo(Student o) {
-        return this.name.compareTo(o.name);
     }
 
     @Override
