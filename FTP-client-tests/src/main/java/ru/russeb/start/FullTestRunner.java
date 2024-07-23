@@ -9,7 +9,7 @@ public class FullTestRunner {
     public static void main(String[] args) {
         TestNG testNG = new TestNG();
         List<String> suiteFiles = new ArrayList<>();
-        suiteFiles.add("src/main/resources/full-testng.xml");
+        suiteFiles.add(FullTestRunner.class.getClassLoader().getResource("full-testng.xml").getFile());
         testNG.setTestSuites(suiteFiles);
         testNG.run();
     }
