@@ -6,7 +6,7 @@
     <parameter name="login" value="admin"/>
     <parameter name="password" value="admin"/>
     <parameter name="pathToFile" value="/information/students.json"/>
-    <parameter name="typeOfConnection" value="ACTIVE"/>
+    <parameter name="typeOfConnection" value="PASSIVE"/>
     <test name="Подключение к FTP-серверу">
         <classes>
             <class name="ru.russeb.service.client.FtpClientHandlerTest"/>
