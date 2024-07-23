@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="FTP Client Tests">
-    <test name="Login and File Transfer Tests">
+<suite name="Проверка подключения к FTP-серверу">
+    <parameter name="host" value="127.0.0.1"/>
+    <parameter name="port" value="21"/>
+    <parameter name="login" value="admin"/>
+    <parameter name="password" value="admin"/>
+    <parameter name="pathToFile" value="/information/students.json"/>
+    <parameter name="typeOfConnection" value="ACTIVE"></parameter>
+    <test name="Подключение к FTP-серверу">
         <classes>
-            <class name="ru.russeb.json.student.StudentParserTest"/>
+
+            <class name="ru.russeb.service.client.FtpClientHandlerTest"/>
         </classes>
     </test>
 </suite>
