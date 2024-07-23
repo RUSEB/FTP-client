@@ -76,7 +76,9 @@
                 </transformer>
               </transformers>
               <finalName>${result.file.name}</finalName>
+              <outputDirectory>${project.basedir}/build</outputDirectory>
             </configuration>
+
           </execution>
         </executions>
       </plugin>
