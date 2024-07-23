@@ -17,10 +17,22 @@ public class StudentHandler {
         if (student == null) {
             throw new RuntimeException("Student can't be null");
         }
-        Student newStudent = new Student(generateId(), student.getName());
+        Student newStudent = new Student(generateId(),
+                student.getName()
+                        .replace("\"","")
+                        .replace("\\","")
+                        .replace("\n",""));
         newStudent.setCourse(student.getCourse());
-        newStudent.setDirectionOfStudy(student.getDirectionOfStudy());
-        newStudent.setFaculty(student.getFaculty());
+        newStudent.setDirectionOfStudy(
+                student.getDirectionOfStudy()
+                        .replace("\"","")
+                        .replace("\\","")
+                        .replace("\n",""));
+        newStudent.setFaculty(
+                student.getFaculty()
+                        .replace("\"","")
+                        .replace("\\","")
+                        .replace("\n",""));
         studentMap.put(newStudent.getId(), newStudent);
         return newStudent.getId();
     }

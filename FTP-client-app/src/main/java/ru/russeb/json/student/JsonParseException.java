@@ -1,6 +1,7 @@
 package ru.russeb.json.student;
 
-import java.io.IOException;
-
-public class JsonParseException extends IOException {
+public class JsonParseException extends ParseException {
+    public JsonParseException(String message) {
+        super(message);
+    }
 }

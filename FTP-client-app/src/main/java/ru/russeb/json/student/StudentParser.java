@@ -21,10 +21,27 @@ public class StudentParser {
                 json.replace("\n","").replaceAll(JSON_WITHOUT_SPACE_PATTERN, "");
 
         if(invalidJson(jsonWithoutLineFeed)){
-            throw new JsonParseException();
+            throw new JsonParseException("Ошибка обработки строки!");
         }
         Matcher matcher = getMatcherWithStudents(jsonWithoutLineFeed);
         return buildStudentsFromMatcher(matcher);
+    }
+
+    public static String writeStudentsAtJson(Map<Integer, Student> studentMap) throws MapParseException {
+        StringBuilder studentArrayJson = new StringBuilder();
+
+        studentMap.forEach((key, value) -> {
+            studentArrayJson.append(studentToJson(value)).append(",\n");
+        });
+
+        if (studentArrayJson.length() > 0) {
+            studentArrayJson.deleteCharAt(studentArrayJson.length() - 2);
+        }
+        String result = String.format("{\n  \"students\": [\n%s\n  ]\n}", studentArrayJson);
+        if(invalidJson(result.replace("\n","").replaceAll(JSON_WITHOUT_SPACE_PATTERN, ""))){
+            throw new MapParseException("Ошибка! Встречены недопустимые символы.");
+        }
+        return result;
     }
 
     private static boolean invalidJson(String json){
@@ -71,19 +88,6 @@ public class StudentParser {
         return id <= 0;
     }
 
-
-    public static String writeStudentsAtJson(Map<Integer, Student> studentMap) {
-        StringBuilder studentArrayJson = new StringBuilder();
-
-        studentMap.forEach((key, value) -> {
-            studentArrayJson.append(studentToJson(value)).append(",\n");
-        });
-
-        if (studentArrayJson.length() > 0) {
-            studentArrayJson.deleteCharAt(studentArrayJson.length() - 2);
-        }
-        return String.format("{\n  \"students\": [\n%s\n  ]\n}", studentArrayJson);
-    }
 
     private static String studentToJson(Student student) {
         return String.format("    {\n"
